@@ -1,0 +1,42 @@
+package padroes;
+
+import modelo.Projeto;
+import modelo.Usuario;
+
+import java.util.Comparator;
+import java.util.List;
+
+public class RelatorioProjetosMaisAtivos implements EstrategiaRelatorio {
+
+    @Override
+    public String gerarRelatorio(List<Projeto> projetos, List<Usuario> usuarios) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("╔══════════════════════════════════════╗\n");
+        sb.append("║      PROJETOS MAIS ATIVOS            ║\n");
+        sb.append("╚══════════════════════════════════════╝\n\n");
+
+        projetos.stream()
+            .sorted(Comparator.comparingInt((Projeto p) -> p.getParticipantes().size()).reversed())
+            .limit(10)
+            .forEach(p -> {
+                sb.append("  ").append(p.getTitulo()).append("\n");
+                sb.append("   Área: ").append(p.getArea()).append("\n");
+                sb.append("   Orientador: ").append(p.getOrientador().getNome()).append("\n");
+                sb.append("   Participantes: ").append(p.getParticipantes().size())
+                  .append("/").append(p.getTotalVagas()).append("\n");
+                sb.append("   Status: ").append(p.getStatus()).append("\n");
+                sb.append("   Relatórios: ").append(p.getRelatorios().size()).append("\n\n");
+            });
+
+        if (projetos.isEmpty()) {
+            sb.append("Nenhum projeto cadastrado no sistema.\n");
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public String getNomeEstrategia() {
+        return "Projetos Mais Ativos";
+    }
+}
